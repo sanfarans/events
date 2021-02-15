@@ -1,0 +1,10 @@
+<div><h1>All events</h1> <a href="{% url 'registration' %}">Register to an event</a></div>
+{% for event in event_list %}
+    <ul>
+        <li>{{ event.title }}</li>
+        <li>{{ event.start_date }} - {{ event.end_date }}</li>
+        {% if event.thumbnail %}
+            <li><img src="{{ event.thumbnail.url }}"></li>
+        {% endif %}
+    </ul>
+{% endfor %}
