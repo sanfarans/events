@@ -1,6 +1,7 @@
 <h1>Manage your reservation</h1>
-<form action="" method="POST">
+<h2>{{ reservation.code }}, {{ reservation.event }}</h2>
+<form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
+    <input type="text" value="{{reservation.code}}" readonly name="code">
+    <input type="submit" value="Cancel reservation">
 </form>

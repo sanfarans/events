@@ -1,4 +1,9 @@
-<div><h1>All events</h1> <a href="{% url 'registration' %}">Register to an event</a></div>
+<div><h1>All events</h1> <a href="{% url 'reservation_new' %}">Register to an event</a></div>
+<p>Manage your reservation</p>
+<form method="GET" action="{% url 'reservation_manage' %}">
+    <input type="text" placeholder="place your code here" name="code">
+    <input type="submit" value="OK">
+</form>
 {% for event in event_list %}
     <ul>
         <li>{{ event.title }}</li>

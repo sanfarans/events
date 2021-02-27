@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 import random
+import string
 
 class Event(models.Model):
     title = models.CharField(max_length=250)
@@ -12,12 +13,15 @@ class Event(models.Model):
         return self.title
 
 def random_string():
-    return str(random.randint(100000, 999999))
+    alphabet = list(string.ascii_letters)
+    str = ''
+    for i in range(15):
+        idx = random.randint(0,len(alphabet)-1)
+        str += alphabet[idx]
+    return str
+
 
 class ReservationCode(models.Model):
-    code = models.CharField(default=random_string, max_length=10)
+    code = models.CharField(default=random_string, max_length=15)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     reserved = models.BooleanField(default=True)
-
-    def get_absoulte_url(self):
-        return reverse('reservation', args=[str(self.code)])
