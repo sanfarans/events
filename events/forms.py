@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from django.forms.fields import BooleanField, CharField
+from django.forms.fields import CharField
 from .models import ReservationCode, random_string
 
 class ReservationForm(ModelForm):
