@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework import status
 from events.models import Event, ReservationCode, random_string
 from .serializers import EventSerializer, ReservationCodeSerializer
 
@@ -20,7 +21,7 @@ class EventAPIView(APIView):
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
 
 
@@ -45,29 +46,32 @@ class ManageReservationAPIView(APIView):
         try:
             reservation = ReservationCode.objects.get(code=code)
         except:
-            return Response({'response': 'No reservation with such code in the database'})
+            message = 'No reservation with such code in the database'
+            return Response({'response': message}, status=status.HTTP_404_NOT_FOUND)
         event = ReservationCodeSerializer(reservation).data["event"]
         resp = {'event': event, 'code': code}
         return Response(resp)
     
-    def post(self, request):
+    def delete(self, request):
         code = request.data["code"]
         try:
             reservation = ReservationCode.objects.get(code=code)
         except:
-            return Response({'response': 'No reservation with such code in the database'})
+            message = 'No reservation with such code in the database'
+            return Response({'response': message}, status=status.HTTP_404_NOT_FOUND)
         
         event = reservation.event
         length_in_days = int(str(event.end_date - event.start_date).split()[0])
         if length_in_days > 2:
-            return Response({'response': "You can't cancel registration for event that lasts longer than two days"})
+            message = "You can't cancel registration for event that lasts longer than two days"
+            return Response({'response': message}, status=status.HTTP_409_CONFLICT)
         today = date.today()
-        print(event.start_date, today)
         days_until_event = int(str(event.start_date - today).split()[0])
-        print(days_until_event)
         if days_until_event < 0:
-            return Response({'response': "Event already started"})
+            message = "Event already started"
+            return Response({'response': message}, status=status.HTTP_409_CONFLICT)
         if days_until_event < 2:
-            return Response({'response': "You can't cancel registration for event that's starting in two days or sooner"})
+            message = "You can't cancel registration for event that's starting in two days or sooner"
+            return Response({'response': message}, status=status.status.HTTP_409_CONFLICT)
         reservation.delete()
-        return Response({'response': 'Successfully cancelled'})
+        return Response({'response': 'Successfully cancelled'}, status=status.HTTP_200_OK)
