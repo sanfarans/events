@@ -12,8 +12,11 @@ from datetime import date
 class EventAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
+    def get_queryset(self):
+        return Event.objects.all()
+
     def get(self, request):
-        serializer = EventSerializer(Event.objects.all(), many=True)
+        serializer = EventSerializer(self.get_queryset(), many=True)
         print(serializer.data)
         return Response(serializer.data)
 
@@ -26,6 +29,7 @@ class EventAPIView(APIView):
 
 
 class RegisterAPIView(APIView):
+    queryset = Event.objects.all()
 
     def post(self, request):
         serializer = ReservationCodeSerializer(data=request.data)
@@ -40,6 +44,7 @@ class RegisterAPIView(APIView):
 
 
 class ManageReservationAPIView(APIView):
+    queryset = ReservationCode.objects.all()
 
     def get(self, request):
         code = request.query_params.get('code')
